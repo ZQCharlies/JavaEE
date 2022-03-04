@@ -4,3 +4,15 @@ server:
 spring:
   application:
     name: provider
+
+eureka:
+  client:
+    # ???Eureka?????
+    register-with-eureka: true
+    # ????????
+    fetch-registry: true
+    service-url:
+      #???eureka-server
+      defaultZone: http://127.0.0.1:9000/eureka/
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
