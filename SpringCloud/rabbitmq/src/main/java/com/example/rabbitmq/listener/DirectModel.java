@@ -1,4 +1,4 @@
-package com.example.rabbitmq.consumer;
+package com.example.rabbitmq.listener;
 
 import com.example.rabbitmq.config.DirectMQConfig;
 import lombok.extern.slf4j.Slf4j;

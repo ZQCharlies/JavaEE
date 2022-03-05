@@ -1,11 +1,9 @@
-package com.example.rabbitmq.consumer;
+package com.example.rabbitmq.listener;
 
-import com.example.rabbitmq.config.WorkMQConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 /**

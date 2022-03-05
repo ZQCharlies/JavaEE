@@ -4,6 +4,8 @@ import com.example.rabbitmq.config.DirectMQConfig;
 import com.example.rabbitmq.config.FanoutMQConfig;
 import com.example.rabbitmq.config.TopicMQConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.ReturnedMessage;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,9 +31,17 @@ public class Producer {
      */
     @GetMapping(value = "simple")
     public void  simple(){
-        String concatMessage = String.valueOf(Math.random());
-        log.info("message:{}",concatMessage);
-        rabbitTemplate.convertAndSend("simple",concatMessage);
+
+//        for (int i = 0; i < 1000000; i++) {
+            String concatMessage = String.valueOf(Math.random());
+//            log.info("message:{}",concatMessage);
+            rabbitTemplate.convertAndSend("simple",concatMessage);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        }
     }
 
     /**
@@ -89,5 +99,44 @@ public class Producer {
                 rabbitTemplate.convertAndSend(TopicMQConfig.TOPIC_EXCHANGE_NAME,TopicMQConfig.TOPIC_ROUTING_KEY_TWO,String.valueOf(i));
             }
         }
+    }
+
+    /**
+     * spring:
+     *   rabbitmq:
+     *     host: 192.168.31.168
+     *     #开启rabbitMQ的生产方确认模式
+     *     publisher-confirm-type: correlated
+     *     # 开启发布者退回模式
+     *     publisher-returns: true
+     */
+    @GetMapping("callback")
+    public void callback(){
+
+        //确认模式：保证发送方到交换机的可靠性。
+        //    1.开启confirm模式，publisher-confirm-type: correlated
+        //    2.设置rabbitTemplate的确认回调函数。判断消息没有到达交换机
+        rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback(){
+            @Override
+            public void confirm(CorrelationData correlationData, boolean b, String s) {
+                if(b==false){//消息没有到达交换机,如果消息到达交换机则返回true,如果消息没有到达交换机则返回一个false
+                    System.out.println("继续发现消息");
+                    //取消订单
+                }
+            }
+        });
+
+        //退回模式:保证到达队列的可靠性
+        //1. 开启退回模式。
+        //2. 设置RabbitTemplate的退回回调函数。只要交换机到队列失败时才会触发该方法
+        rabbitTemplate.setReturnsCallback(new RabbitTemplate.ReturnsCallback(){
+            @Override
+            public void returnedMessage(ReturnedMessage returnedMessage) {
+                //可以继续发送也可以取消相应的业务功能。
+                System.out.println("消息从交换机到队列失败"+returnedMessage.getReplyText());
+            }
+        });
+
+
     }
 }
