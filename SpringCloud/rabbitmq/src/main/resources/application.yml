@@ -1,0 +1,37 @@
+spring:
+  rabbitmq:
+    addresses: 127.0.0.1
+    port: 5627
+    username: guest
+    password: guest
+    publisher-returns: true #自动确认
+    template:
+      retry:
+        #发送重试是否启用
+        enabled: true
+        #最大重试次数
+        max-attempts: 3
+        #第一次和第二次尝试发布或传递消息之间的间隔,单位毫秒
+        initial-interval: 5000
+        #应用于上一重试间隔的乘数
+        multiplier: 1
+        #最大重试时间间隔
+        max-interval: 10000
+      cache:
+        connection:
+          #连接工厂缓存模式：channel 和 connection
+          mode: connection
+          #缓存的connection数，只有是CONNECTION模式时生效
+          size: 25
+      listener:
+        simple:
+          #默认情况下，拒绝交付是否重新排队
+          default-requeue-rejected: false
+          concurrency: 1
+          max-concurrency: 1
+          retry:
+            enabled: false
+            #initial-interval: 5000
+          acknowledge-mode: auto
+          prefetch: 1
+      virtual-host: /

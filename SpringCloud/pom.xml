@@ -19,6 +19,7 @@
     <modules>
         <module>provider</module>
         <module>eureka-server</module>
+        <module>rabbitmq</module>
     </modules>
 
     <properties>
