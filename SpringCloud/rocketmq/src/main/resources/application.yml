@@ -1,0 +1,24 @@
+server:
+  port: 9100
+
+demo:
+  rocketmq:
+    bytesRequestTopic: bytesRequestTopic:tagA
+    ext:
+      useTLS: false
+    extNameServer: 127.0.0.1:9876
+    genericRequestTopic: genericRequestTopic:tagA
+    msgExtTopic: message-ext-topic
+    objectRequestTopic: objectRequestTopic:tagA
+    orderTopic: order-paid-topic
+    stringRequestTopic: stringRequestTopic:tagA
+    topic: string-topic
+    topic.user: user-topic
+    transTopic: spring-transaction-topic
+rocketmq:
+  name-server: localhost:9876
+  producer:
+    group: my-group1
+    sendMessageTimeout: 300000
+    tls-enable: false
+
